@@ -33,7 +33,9 @@ namespace ParkingLot
             else
             {
                 //Interactive method
-                Console.WriteLine("Operations:create_parking_lot,park,leave,status,registration_nmbers,slot_number");
+                //Syntax for each request
+                Console.WriteLine("Operations Syntax:create_parking_lot,park,leave,status,registration_numbers_for_cars_with_slot_Number"+
+                    "registration_numbers_for_cars_with_colour,slot_numbers_for_registration_number,slot_numbers_for_cars_with_colour");
                 string input;
                 bool retry = false;
                 do
@@ -75,12 +77,12 @@ namespace ParkingLot
     public class CarInfo
     {
         public string registration_num;
-        public string color;
+        public string colour;
 
         public CarInfo(string reg_no, string col)
         {
             registration_num = reg_no;
-            color = col;
+            colour = col;
         }
     }
 
@@ -95,7 +97,7 @@ namespace ParkingLot
         {
             try
             {
-                StreamReader readFile = File.OpenText(inputFile);
+                StreamReader readFile = File.OpenText(inputFile);//file path is a full path
                 string content;
                 while ((content = readFile.ReadLine()) != null)
                 {
@@ -112,6 +114,7 @@ namespace ParkingLot
         {
             try
             {
+                //Checking for keywords in the request
                 if (line.StartsWith("create"))
                 {
                     CreateTotalSlots(line);
@@ -149,6 +152,7 @@ namespace ParkingLot
         }
         public void CreateTotalSlots(string total_slot)
         {
+            //Initially free slot = total slot
             try
             {
                 string[] slotDetail = total_slot.Split(" ");
@@ -157,7 +161,7 @@ namespace ParkingLot
                 {
                     freeSlots.Add(i);
                 }
-                freeSlots.Sort();
+                freeSlots.Sort();//sorting the list so that first element will be the nearest slot.
             }
             catch (Exception ex)
             {
@@ -177,7 +181,7 @@ namespace ParkingLot
                     CarInfo newCar = new CarInfo(carDetails[1], carDetails[2]);
                     int slotNo = freeSlots.First();
                     parkingInfo.Add(slotNo, newCar);
-                    freeSlots.Remove(slotNo);
+                    freeSlots.Remove(slotNo);//once a slot is added to the master record ,remove the entry from free slot list.
                     res = true;
                 }
                 return res;
@@ -227,7 +231,7 @@ namespace ParkingLot
                     Console.WriteLine("SlotNo RegistrationNo Colour");
                     foreach (var i in parkingInfo)
                     {
-                        Console.WriteLine(i.Key.ToString().PadRight(7) + i.Value.registration_num.ToString().PadRight(15) + i.Value.color.ToString().PadRight(10));
+                        Console.WriteLine(i.Key.ToString().PadRight(7) + i.Value.registration_num.ToString().PadRight(15) + i.Value.colour.ToString().PadRight(10));
                     }
                 }
             }
@@ -244,7 +248,7 @@ namespace ParkingLot
             {
                 string[] slotInfo = slotDetails.Split(" ");
                 int slotNum = 0;
-                string color;
+                string colour;
                 bool result = int.TryParse(slotInfo[1], out slotNum);
                 //to find registration nm of the car in the specified slot
                 if (result)
@@ -257,21 +261,29 @@ namespace ParkingLot
                             Console.WriteLine("Registration num :: " + res);
                         }
                     }
+                    if (string.IsNullOrEmpty(res))
+                    {
+                        Console.WriteLine("Not found");
+                    }
                 }
                 else
                 {
-                    color = slotInfo[1];
+                    colour = slotInfo[1];
                     foreach (var i in parkingInfo)
                     {
-                        if (i.Value.color.EndsWith(color))
+                        if (i.Value.colour.EndsWith(colour))
                         {
                             if (!string.IsNullOrEmpty(res))
                                 res = res + " " + i.Value.registration_num;
                             else
                                 res = i.Value.registration_num;
-                            Console.WriteLine("Registration no" + res);
                         }
                     }
+                    if (string.IsNullOrEmpty(res))
+                    {
+                        Console.WriteLine("Not found");
+                    }
+                    Console.WriteLine("Registration no:" + res);
                 }
                 return res;
             }
@@ -289,11 +301,11 @@ namespace ParkingLot
             {
                 string[] slotInfo = slotDetails.Split(" ");
                 string choice = slotInfo[1]; //check if its color or registration number
-                if (slotInfo[0].EndsWith("color"))
+                if (slotInfo[0].EndsWith("colour"))
                 {
                     foreach (var i in parkingInfo)
                     {
-                        if (i.Value.color == choice)
+                        if (i.Value.colour == choice)
                         {
                             if (!string.IsNullOrEmpty(res))
                                 res = res + " " + i.Key.ToString();
@@ -301,6 +313,10 @@ namespace ParkingLot
                                 res = i.Key.ToString();
                             Console.WriteLine("SlotNo:" + res);
                         }
+                    }
+                    if(string.IsNullOrEmpty(res))
+                    {
+                        Console.WriteLine("Not found");
                     }
                 }
                 else if (slotInfo[0].EndsWith("registration_number"))
@@ -313,6 +329,10 @@ namespace ParkingLot
                             Console.WriteLine("SlotNo:" + res);
                             break;
                         }
+                    }
+                    if (string.IsNullOrEmpty(res))
+                    {
+                        Console.WriteLine("Not found");
                     }
                 }
                 else
