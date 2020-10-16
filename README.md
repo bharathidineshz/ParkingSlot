@@ -1,7 +1,7 @@
 # ParkingSlot
 C# .NET Core parking System Problem description:
 To design a parking slot .NET core application
-Constraints and assumptions:
+# Constraints and assumptions:
 * Syntax of each request should be followed as below.
 For create                           :  create <total no of slots>
 For park                             :  park <reg_no> <colour>
@@ -14,19 +14,44 @@ For exit                             :   exit
 * Input file should be a text file and should be given full path.
     Eg: c:/users/bharathi/testfile.txt
 
-* The first statement of the input file /interactive command should be create <slotno>.
-* Create request should be used only once in the file or in the interactive method.
+* The first statement of the input file should be create <slotno>.
 * 'exit' command is used to exit the application.
-* All the commands and requests are case sensitive
+* Commands and requests are not case sensitive.
+Summary:
+1.On create request, total no of slot is fixed.Slot maintained is sorted.
+2.On park request, car details are collected and alloted the nearest slot. Allocated slot detail and car detail is stored in the master record.
+3.On leave request, entry of the particular slot is deleted and the slot no is added to the freed slot.
+4.On status request, Slot no,registration no and color of the vehicle is fetched from the master record and displayed.
+5.On Get_Registration no using colour /Slot no ,master record is searched and displayed.
+6.On Get_Slotno using colour/Registration no,slot no is fetched from master record.
+
 
 # Sample file.txt
-create 3
-park TN-33X-9999 black
+create 4
+park TN-55X-9999 black
 park TN-44X-8888 white
-park TN-55X-7777 black
+park TN-33X-9889 black
+status
 leave 2
 status
-registration_numbers 1
-registration_numbers black
-slot_numbers_colour black
-slot_numbers_registration_number TN-55X-7777
+registration_numbers_for_cars_with_Colour black
+registration_numbers_for_cars_with_slot_Number 2
+slot_numbers_for_cars_with_colour Red
+park TN-22X-6767 Red
+
+
+Executable is a self contained app. So it runs in machine without .netcore .
+Download the ParkingLot.exe, ParkingLot.pdb  and testfile.txt from the below git path.
+bharathidineshz/ParkingSlot/Executables
+
+Open command prompt.
+Method 1:
+Give full path of the exe.Eg:c:/users/bharathi/ParkingLot.exe.then start with the commands mentioned above.
+Method 2:
+Enter the necessary commands in a text file .Eg:testFile.txt
+Give full path of the exe with filename(FullPath) as argument.
+Eg: c:/users/bharathi/ParkingLot.exe c:/users/test/testfile.txt
+
+
+
+

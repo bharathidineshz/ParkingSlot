@@ -19,13 +19,32 @@ namespace ParkingLot.Program.Tests
             expected.Should().Be(3);
             //Assert.Fail();
         }
+
+        [TestMethod()]
+
+        public void Test_CreateTotalSlotsMultipletimes()
+        {
+            Parking req = new Parking();
+            req.CreateTotalSlots("create 3").Should().BeTrue();
+            req.CreateTotalSlots("create 2").Should().BeFalse();
+        }
         [TestMethod()]
         public void Test_ParkingMethod()
         {
             var req = new Parking();
             req.CreateTotalSlots("create 3");
             req.ParkingMethod("park TN-37X-9999 black").Should().BeTrue();
+        }
 
+        [TestMethod()]
+        public void Test_ParkingMoreThanTotalSlots()
+        {
+            var req = new Parking();
+            req.CreateTotalSlots("create 3");
+            req.ParkingMethod("park TN-37X-9999 black").Should().BeTrue();
+            req.ParkingMethod("park TN-47X-8888 white").Should().BeTrue();
+            req.ParkingMethod("park TN-57X-7777 Pink").Should().BeTrue();
+            req.ParkingMethod("park TN-33X-9988 black").Should().BeFalse();
         }
 
         [TestMethod()]
@@ -67,6 +86,18 @@ namespace ParkingLot.Program.Tests
         }
 
         [TestMethod()]
+        public void Test_DisplayRegistrationNumber_Of_Vehicle_Not_Present()
+        {
+            var req = new Parking();
+            req.CreateTotalSlots("create 1");
+            req.ParkingMethod("park TN-55X-9999 black");
+            string res = req.DisplayRegistrationNumber("registration_numbers_for_cars_with_slot_number 2");
+            res.Should().BeEquivalentTo(null);
+            res = req.DisplayRegistrationNumber("registration_numbers_for_cars_with_colour white");
+            res.Should().BeEquivalentTo(null);
+        }
+
+        [TestMethod()]
         public void Test_DisplaySlotNumber()
         {
             var req = new Parking();
@@ -80,7 +111,18 @@ namespace ParkingLot.Program.Tests
             res = req.DisplaySlotNumber("slot_numbers_for_registration_number TN-44X-5555");
             test = "2";
             res.Should().BeEquivalentTo(test);
+        }
 
+        [TestMethod()]
+        public void Test_DisplaySlotNum_Of_Vehicle_Not_Present()
+        {
+            var req = new Parking();
+            req.CreateTotalSlots("create 1");
+            req.ParkingMethod("park TN-55X-9999 black");
+            string res = req.DisplayRegistrationNumber("slot_numbers_for_cars_with_register_number TN-33A-8989");
+            res.Should().BeEquivalentTo(null);
+            res = req.DisplayRegistrationNumber("slot_numbers_for_cars_with_colour white");
+            res.Should().BeEquivalentTo(null);
         }
     }
 }

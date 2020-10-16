@@ -35,7 +35,7 @@ namespace ParkingLot
             {
                 //Interactive method
                 //Syntax for each request
-                Console.WriteLine("Operations Syntax:create_parking_lot,park,leave,status,registration_numbers_for_cars_with_slot_Number"+
+                Console.WriteLine("Operations Syntax:create_parking_lot,park,leave,status,registration_numbers_for_cars_with_slot_Number,"+
                     "registration_numbers_for_cars_with_colour,slot_numbers_for_registration_number,slot_numbers_for_cars_with_colour");
                 string input;
                 bool retry = false;
@@ -43,22 +43,27 @@ namespace ParkingLot
                 {
                     input = Console.ReadLine();
                     //First operation is to create total slots
-                    if (input.StartsWith("create"))
+                    if (input.StartsWith("create",StringComparison.InvariantCultureIgnoreCase))
                     {
                         park_obj.CreateTotalSlots(input); //creates total slot 
                         input = Console.ReadLine();
-                        while (input != "exit")
+                        while (!string.Equals(input, "exit", StringComparison.InvariantCultureIgnoreCase))
                         {
                             park_obj.OperationCheck(input);
                             input = Console.ReadLine();
                         }
-                        if (input.Equals("exit"))
+                        if (string.Equals(input, "exit", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            break;
+                        }
+                        /*if (input.Equals("exit"))
                         {
                             //retry = true;
                             break;
-                        }
+                        }*/
                     }
-                    else if (input.Equals("exit"))//to exit the application
+                    else if(string.Equals(input, "exit", StringComparison.InvariantCultureIgnoreCase))
+                    //else if (input.Equals("exit"))//to exit the application
                     {
                         //retry = true;
                         break;
@@ -89,10 +94,10 @@ namespace ParkingLot
 
     public class Parking
     {
-        public List<int> freeSlots = new List<int>(); //Initially freslot = totalslot
+        public List<int> freeSlots;  //Initially freslot = totalslot
 
         //Master Record maintaing slot details and car details
-        public Dictionary<int, CarInfo> parkingInfo = new Dictionary<int, CarInfo>();
+        public Dictionary<int, CarInfo> parkingInfo;
 
         public void ParseFile(string inputFile)
         {
@@ -116,28 +121,29 @@ namespace ParkingLot
             try
             {
                 //Checking for keywords in the request
-                if (line.StartsWith("create"))
+                if (line.StartsWith("create",StringComparison.InvariantCultureIgnoreCase))
                 {
                     CreateTotalSlots(line);
+                    //Console.WriteLine("Total slots cannot be declared again.");
                 }
-                else if (line.StartsWith("park"))
+                if (line.StartsWith("park",StringComparison.InvariantCultureIgnoreCase))
                 {
                     ParkingMethod(line);
                 }
-                else if (line.StartsWith("leave"))
+                else if (line.StartsWith("leave",StringComparison.InvariantCultureIgnoreCase))
                 {
                     Parking_ExitUpdateSlotDetails(line);
                 }
-                else if (line.StartsWith("status"))
+                else if (line.StartsWith("status",StringComparison.InvariantCultureIgnoreCase))
                 {
                     DisplaySlotDetails();
 
                 }
-                else if (line.StartsWith("registration_numbers"))
+                else if (line.StartsWith("registration_numbers",StringComparison.InvariantCultureIgnoreCase))
                 {
                     DisplayRegistrationNumber(line);
                 }
-                else if (line.StartsWith("slot_numbers"))
+                else if (line.StartsWith("slot_numbers",StringComparison.InvariantCultureIgnoreCase))
                 {
                     DisplaySlotNumber(line);
                 }
@@ -151,22 +157,35 @@ namespace ParkingLot
                 Console.WriteLine("::OperationCheck Exception::" + ex.Message);
             }
         }
-        public void CreateTotalSlots(string total_slot)
+        public bool CreateTotalSlots(string total_slot)
         {
             //Initially free slot = total slot
             try
             {
-                string[] slotDetail = total_slot.Split(" ");
-                int totalSlot = int.Parse(slotDetail[1]);
-                for (int i = 1; i <= totalSlot; i++)
+                if(freeSlots !=null)
                 {
-                    freeSlots.Add(i);
+                    Console.WriteLine("Total slots cannot be defined multiple times.");
+                    return false;
                 }
-                freeSlots.Sort();//sorting the list so that first element will be the nearest slot.
+                else
+                {
+                    freeSlots = new List<int>();
+                    parkingInfo = new Dictionary<int, CarInfo>();
+                    string[] slotDetail = total_slot.Split(" ");
+                    int totalSlot = int.Parse(slotDetail[1]);
+                    for (int i = 1; i <= totalSlot; i++)
+                    {
+                        freeSlots.Add(i);
+                    }
+                    freeSlots.Sort();//sorting the list so that first element will be the nearest slot.
+                    Console.WriteLine("Total Slots:" + freeSlots.Count);
+                    return true;
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("::CreateTotalSlots Exception::" + ex.Message);
+                return false;
             }
         }
         public bool ParkingMethod(string parking_details)
@@ -175,16 +194,24 @@ namespace ParkingLot
             bool res = false;
             try
             {
-
-                string[] carDetails = parking_details.Split(" ");
-                if (carDetails.Length > 0)
+                if(freeSlots.Count ==0)
                 {
-                    CarInfo newCar = new CarInfo(carDetails[1], carDetails[2]);
-                    int slotNo = freeSlots.First();
-                    parkingInfo.Add(slotNo, newCar);
-                    freeSlots.Remove(slotNo);//once a slot is added to the master record ,remove the entry from free slot list.
-                    res = true;
+                    res = false;
+                    Console.WriteLine("No free slots");
                 }
+                else
+                {
+                    string[] carDetails = parking_details.Split(" ");
+                    if (carDetails.Length > 0)
+                    {
+                        CarInfo newCar = new CarInfo(carDetails[1], carDetails[2]);
+                        int slotNo = freeSlots.First();
+                        parkingInfo.Add(slotNo, newCar);
+                        freeSlots.Remove(slotNo);//once a slot is added to the master record ,remove the entry from free slot list.
+                        res = true;
+                    }
+                }
+                
                 return res;
             }
             catch (Exception ex)
@@ -266,7 +293,7 @@ namespace ParkingLot
                     string colour;
                     bool result = int.TryParse(slotInfo[1], out slotNum);
                     //to find registration nm of the car in the specified slot
-                    if (result)
+                    if (slotInfo[0].EndsWith("slot_number", StringComparison.InvariantCultureIgnoreCase))
                     {
                         foreach (var i in parkingInfo)
                         {
@@ -281,12 +308,12 @@ namespace ParkingLot
                             Console.WriteLine("Not found");
                         }
                     }
-                    else
+                    else if(slotInfo[0].EndsWith("colour", StringComparison.InvariantCultureIgnoreCase))
                     {
                         colour = slotInfo[1];
                         foreach (var i in parkingInfo)
                         {
-                            if (i.Value.colour.EndsWith(colour))
+                            if (String.Equals(i.Value.colour,colour,StringComparison.InvariantCultureIgnoreCase))
                             {
                                 if (!string.IsNullOrEmpty(res))
                                     res = res + " " + i.Value.registration_num;
@@ -298,7 +325,14 @@ namespace ParkingLot
                         {
                             Console.WriteLine("Not found");
                         }
-                        Console.WriteLine("Registration no:" + res);
+                        else
+                        {
+                            Console.WriteLine("Registration no:" + res);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Enter correct syntax to get the registration number");
                     }
                     return res;
                 }
@@ -325,29 +359,32 @@ namespace ParkingLot
                 {
                     string[] slotInfo = slotDetails.Split(" ");
                     string choice = slotInfo[1]; //check if its color or registration number
-                    if (slotInfo[0].EndsWith("colour"))
+                    if (slotInfo[0].EndsWith("colour",StringComparison.InvariantCultureIgnoreCase))
                     {
                         foreach (var i in parkingInfo)
                         {
-                            if (i.Value.colour == choice)
+                            if (String.Equals(i.Value.colour,choice,StringComparison.InvariantCultureIgnoreCase))
                             {
                                 if (!string.IsNullOrEmpty(res))
                                     res = res + " " + i.Key.ToString();
                                 else
                                     res = i.Key.ToString();
-                                Console.WriteLine("SlotNo:" + res);
                             }
                         }
                         if (string.IsNullOrEmpty(res))
                         {
                             Console.WriteLine("Not found");
                         }
+                        else
+                        {
+                            Console.WriteLine("SlotNo:" + res);
+                        }
                     }
-                    else if (slotInfo[0].EndsWith("registration_number"))
+                    else if (slotInfo[0].EndsWith("registration_number",StringComparison.InvariantCultureIgnoreCase))
                     {
                         foreach (var i in parkingInfo)
                         {
-                            if (i.Value.registration_num == choice)
+                            if (String.Equals(i.Value.registration_num,choice,StringComparison.InvariantCultureIgnoreCase))
                             {
                                 res = i.Key.ToString();
                                 Console.WriteLine("SlotNo:" + res);
@@ -361,7 +398,7 @@ namespace ParkingLot
                     }
                     else
                     {
-                        Console.WriteLine("Choose valid option to get the slot number");
+                        Console.WriteLine("Enter correct syntax to get the slot number");
                     }
                     return res;
                 }
