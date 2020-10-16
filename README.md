@@ -17,6 +17,7 @@ For exit                             :   exit
 * The first statement of the input file should be create <slotno>.
 * 'exit' command is used to exit the application.
 * Commands and requests are not case sensitive.
+* Don't leave an empty line in the test file(argument). Else output will be "Invalid input"
 Summary:
 1.On create request, total no of slot is fixed.Slot maintained is sorted.
 2.On park request, car details are collected and alloted the nearest slot. Allocated slot detail and car detail is stored in the master record.

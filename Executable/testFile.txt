@@ -1,0 +1,13 @@
+create 4
+park TN-55X-9999 black
+park TN-44X-8888 white
+park TN-33X-9889 black
+park TN-22X-9779 white
+status
+leave 2
+status
+registration_numbers_for_cars_with_Colour black
+registration_numbers_Color Black
+registration_numbers_for_cars_with_slot_Number 2
+slot_numbers_for_cars_with_registration_number TN-44X-8888
+slot_numbers_for_cars_with_colour Red
