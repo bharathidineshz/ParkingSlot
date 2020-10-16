@@ -18,7 +18,8 @@ For exit                             :   exit
 * 'exit' command is used to exit the application.
 * Commands and requests are not case sensitive.
 * Don't leave an empty line in the test file(argument). Else output will be "Invalid input"
-Summary:
+    
+# Summary:
 1.On create request, total no of slot is fixed.Slot maintained is sorted.
 2.On park request, car details are collected and alloted the nearest slot. Allocated slot detail and car detail is stored in the master record.
 3.On leave request, entry of the particular slot is deleted and the slot no is added to the freed slot.
@@ -45,12 +46,12 @@ Executable is a self contained app. So it runs in machine without .netcore .
 Download the ParkingLot.exe, ParkingLot.pdb  and testfile.txt from the below git path.
 bharathidineshz/ParkingSlot/Executables
 
-Open command prompt.
-Method 1:
-Give full path of the exe.Eg:c:/users/bharathi/ParkingLot.exe.then start with the commands mentioned above.
-Method 2:
+# Method 1:
+Give full path of the exe in the command prompt.
+Eg:c:/users/bharathi/ParkingLot.exe.then start with the commands mentioned above.
+# Method 2:
 Enter the necessary commands in a text file .Eg:testFile.txt
-Give full path of the exe with filename(FullPath) as argument.
+Give full path of the exe with filename(FullPath) as argument in the command prompt.
 Eg: c:/users/bharathi/ParkingLot.exe c:/users/test/testfile.txt
 
 
